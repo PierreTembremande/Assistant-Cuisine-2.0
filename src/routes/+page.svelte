@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import { goto } from "$app/navigation";
 
-    // Définition de l'interface pour une catégorie
     interface Category {
         idCategory: string;
         strCategory: string;
@@ -9,8 +9,8 @@
         strCategoryThumb: string;
     }
 
-    // Déclaration et typage de la variable
     let categories: Category[] = [];
+    let recette = "";
 
     onMount(async () => {
         try {
@@ -21,14 +21,27 @@
             categories = fetchedCategories.filter((category: Category) =>
                 category.strCategory.toLowerCase()
             );
-            console.log(categories)
         } catch (error) {
             console.error("Erreur lors de la récupération des données", error);
         }
     });
+
+    function redirectionVersRecette() {
+        goto(`/Recette?nom=${recette}`);
+    }
 </script>
 
-<!-- HTML pour le tableau -->
+<div>
+    <input
+        bind:value={recette}
+        type="text"
+        placeholder="Entrer le nom de votre recette"
+    />
+    <button on:click={redirectionVersRecette}>Trouver</button>
+</div>
+
+<br />
+
 <table>
     <thead>
         <tr>
@@ -46,16 +59,20 @@
     </tbody>
 </table>
 
-<!-- Style CSS pour le tableau -->
 <style>
     table {
         width: 100%;
         border-collapse: collapse;
     }
+
     th,
     td {
         border: 1px solid black;
         padding: 8px;
         text-align: left;
+    }
+
+    div {
+        text-align: center;
     }
 </style>
