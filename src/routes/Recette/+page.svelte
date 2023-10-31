@@ -3,9 +3,9 @@
 
     let titreRecette = "";
     let imageRecette = "";
-    let preparation: string[] = [];
     let notice = "";
-    let imagePlat = "";
+
+    let preparation: string[] = [];
     let miseEnFormeNotice: string[] = [];
 
     onMount(async () => {
@@ -39,7 +39,6 @@
             notice = meals.strInstructions;
             miseEnFormeNotice = notice.split(".");
 
-            imagePlat = meals.strMealThumb;
         } catch (error) {
             console.error("Erreur sur le fetch de l'API", error);
         }
@@ -47,7 +46,10 @@
 </script>
 
 <body>
-    <img src={imagePlat} width="400" height="300" />
+
+    <h2>{titreRecette}</h2>
+    <img src={imageRecette} width="400" height="300" />
+
     {#if preparation.length > 0}
         <ul>
             {#each preparation as ingredient}
@@ -68,5 +70,7 @@
 </body>
 
 <style>
-    
+    h2{
+        text-align: center;
+    }
 </style>
