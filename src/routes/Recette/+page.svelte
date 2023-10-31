@@ -8,6 +8,12 @@
     let preparation: string[] = [];
     let miseEnFormeNotice: string[] = [];
 
+    let retourUtilisateur = {
+        name: "",
+        comment: "",
+        rating: 0,
+    };
+
     onMount(async () => {
         const params = new URLSearchParams(window.location.search);
         const nomRecette = params.get("nom");
@@ -38,17 +44,21 @@
 
             notice = meals.strInstructions;
             miseEnFormeNotice = notice.split(".");
-
         } catch (error) {
             console.error("Erreur sur le fetch de l'API", error);
         }
     });
+
+    function validationAvis() {
+        console.log("Nom de l'utilisateur :", retourUtilisateur.name);
+        console.log("Commentaire :", retourUtilisateur.comment);
+        console.log("Note :", retourUtilisateur.rating);
+    }
 </script>
 
 <body>
-
     <h2>{titreRecette}</h2>
-    <img src={imageRecette} width="400" height="300" />
+    <img src={imageRecette} width="400" height="300" alt="Non trouvé" />
 
     {#if preparation.length > 0}
         <ul>
@@ -62,15 +72,44 @@
 
     {#if miseEnFormeNotice.length > 0}
         {#each miseEnFormeNotice as etape}
-            <p>{etape + "."}</p>
+            <p>{etape}</p>
         {/each}
     {:else}
         <p>Chargement en cours...</p>
     {/if}
+
+    <form on:submit|preventDefault={validationAvis}>
+        <h4>Donnez nous votre avis !</h4>
+
+        <label for="name">Nom :</label>
+        <input type="text" id="name" bind:value={retourUtilisateur.name} />
+        <br>
+
+        <label for="comment">Commentaire :</label>
+        <textarea
+            id="comment"
+            rows="4"
+            bind:value={retourUtilisateur.comment}
+        />
+        <br>
+
+        <label for="rating">Note :</label>
+        <input
+            type="number"
+            id="rating"
+            min="1"
+            max="5"
+            bind:value={retourUtilisateur.rating}
+        />
+        <br>
+
+        <button type="submit">Envoyer l'avis</button>
+    </form>
 </body>
 
 <style>
-    h2{
+    h2,
+    form {
         text-align: center;
     }
 </style>

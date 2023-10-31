@@ -11,6 +11,7 @@
 
     let categories: Category[] = [];
     let recette = "";
+    let nomRecetteDuJour="";
 
     onMount(async () => {
         try {
@@ -21,6 +22,13 @@
             categories = fetchedCategories.filter((category: Category) =>
                 category.strCategory.toLowerCase()
             );
+
+            const reponse1 = await fetch(
+                `https://www.themealdb.com/api/json/v1/1/random.php`
+            );
+            const recetteDuJour = await reponse1.json();
+            nomRecetteDuJour =recetteDuJour.meals[0]["strMeal"];
+
         } catch (error) {
             console.error("Erreur lors de la récupération des données", error);
         }
@@ -41,6 +49,12 @@
 </div>
 
 <br />
+
+<div>
+    <p>Recette du moment : {nomRecetteDuJour} </p>
+</div>
+
+<br/>
 
 <table>
     <thead>
@@ -72,7 +86,7 @@
         text-align: left;
     }
 
-    div {
+    div{
         text-align: center;
     }
 </style>
