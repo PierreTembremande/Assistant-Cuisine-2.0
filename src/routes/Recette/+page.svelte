@@ -1,9 +1,11 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import { supabase } from "../Bdd/bdd";
 
     let titreRecette = "";
     let imageRecette = "";
     let notice = "";
+    let req;
 
     let preparation: string[] = [];
     let miseEnFormeNotice: string[] = [];
@@ -47,12 +49,28 @@
         } catch (error) {
             console.error("Erreur sur le fetch de l'API", error);
         }
+
+        const { data } = await supabase.from("User").select();
+        console.log(data)
     });
 
     function validationAvis() {
         console.log("Nom de l'utilisateur :", retourUtilisateur.name);
         console.log("Commentaire :", retourUtilisateur.comment);
         console.log("Note :", retourUtilisateur.rating);
+    }
+
+    function AffichageCommentaireRecette() {
+        // const { data, error } = supabase.from("User").select("*");
+        // req = supabase.from("User").select("*");
+        // if (req. {
+        //     console.error(
+        //         "Erreur lors de la récupération des données depuis Supabase",
+        //         error
+        //     );
+        // } else {
+        //     console.log("Données depuis Supabase :", data);
+        // }
     }
 </script>
 
@@ -83,7 +101,7 @@
 
         <label for="name">Nom :</label>
         <input type="text" id="name" bind:value={retourUtilisateur.name} />
-        <br>
+        <br />
 
         <label for="comment">Commentaire :</label>
         <textarea
@@ -91,7 +109,7 @@
             rows="4"
             bind:value={retourUtilisateur.comment}
         />
-        <br>
+        <br />
 
         <label for="rating">Note :</label>
         <input
@@ -101,7 +119,7 @@
             max="5"
             bind:value={retourUtilisateur.rating}
         />
-        <br>
+        <br />
 
         <button type="submit">Envoyer l'avis</button>
     </form>
