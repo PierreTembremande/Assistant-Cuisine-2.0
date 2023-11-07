@@ -5,7 +5,9 @@
     let titreRecette = "";
     let imageRecette = "";
     let notice = "";
-    let req;
+
+    let idMeal = 0;
+    let idUser = 0;
 
     let preparation: string[] = [];
     let miseEnFormeNotice: string[] = [];
@@ -13,7 +15,7 @@
     let retourUtilisateur = {
         name: "",
         comment: "",
-        rating: 0,
+        rating: 0
     };
 
     onMount(async () => {
@@ -28,6 +30,7 @@
             const recette = await reponse.json();
             const meals = recette.meals[0];
 
+            idMeal = meals.idMeal;
             titreRecette = meals.strMeal;
             imageRecette = meals.strMealThumb;
 
@@ -49,28 +52,33 @@
         } catch (error) {
             console.error("Erreur sur le fetch de l'API", error);
         }
-
-        const { data } = await supabase.from("User").select();
-        console.log(data)
     });
 
-    function validationAvis() {
-        console.log("Nom de l'utilisateur :", retourUtilisateur.name);
-        console.log("Commentaire :", retourUtilisateur.comment);
-        console.log("Note :", retourUtilisateur.rating);
+    async function recupIdUser($nomUser: string) {
+        const { data, error } = await supabase
+            .from("User")
+            .select("id")
+            .like("Login", $nomUser);
+
+        if (data && data.length > 0) {
+            idUser = Number(data[0].id);
+        }
     }
 
-    function AffichageCommentaireRecette() {
-        // const { data, error } = supabase.from("User").select("*");
-        // req = supabase.from("User").select("*");
-        // if (req. {
-        //     console.error(
-        //         "Erreur lors de la récupération des données depuis Supabase",
-        //         error
-        //     );
-        // } else {
-        //     console.log("Données depuis Supabase :", data);
-        // }
+    async function validationAvis() {
+        await recupIdUser(retourUtilisateur.name);
+        const { data, error } = await supabase.from("Commentaire").insert([
+            {
+                co_user: idUser,
+                co_commentaire: retourUtilisateur.comment,
+                co_note: retourUtilisateur.rating,
+                co_recette: idMeal,
+            },
+        ]);
+    }
+
+    async function AffichageCommentaireRecette() {
+        const { data, error } = await supabase.from("User").select("*");
     }
 </script>
 
@@ -100,6 +108,7 @@
         <h4>Donnez nous votre avis !</h4>
 
         <label for="name">Nom :</label>
+        <input type="hidden" id="idMeal" bind:value={idMeal} />
         <input type="text" id="name" bind:value={retourUtilisateur.name} />
         <br />
 
