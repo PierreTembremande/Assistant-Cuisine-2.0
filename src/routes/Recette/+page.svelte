@@ -11,12 +11,19 @@
 
     let preparation: string[] = [];
     let miseEnFormeNotice: string[] = [];
+    let recupCommentaire: Commentaire[] = [];
 
     let retourUtilisateur = {
         name: "",
         comment: "",
-        rating: 0
+        rating: 0,
     };
+
+    interface Commentaire {
+        co_user: string;
+        co_commentaire: string;
+        co_note: string;
+    }
 
     onMount(async () => {
         const params = new URLSearchParams(window.location.search);
@@ -49,6 +56,8 @@
 
             notice = meals.strInstructions;
             miseEnFormeNotice = notice.split(".");
+
+            AffichageCommentaireRecette(idMeal);
         } catch (error) {
             console.error("Erreur sur le fetch de l'API", error);
         }
@@ -75,14 +84,26 @@
                 co_recette: idMeal,
             },
         ]);
+        AffichageCommentaireRecette(idMeal);
+        retourUtilisateur.name = "";
+        retourUtilisateur.comment = "";
+        retourUtilisateur.rating = 0;
     }
 
-    async function AffichageCommentaireRecette() {
-        const { data, error } = await supabase.from("User").select("*");
+    async function AffichageCommentaireRecette($idMeal: number) {
+        const { data, error } = await supabase
+            .from("Commentaire")
+            .select("*")
+            .eq("co_recette", $idMeal);
+
+        if (data && data.length > 0) {
+            recupCommentaire = data;
+        }
     }
 </script>
 
 <body>
+    <button on:click={() => window.location.href = "http://localhost:5173/"}>Retour à l'accueil</button>
     <h2>{titreRecette}</h2>
     <img src={imageRecette} width="400" height="300" alt="Non trouvé" />
 
@@ -103,6 +124,13 @@
     {:else}
         <p>Chargement en cours...</p>
     {/if}
+
+    <h3>Section commentaire</h3>
+    {#each recupCommentaire as com}
+        <p>Utilisateur : {com.co_user}</p>
+        <p>{com.co_commentaire}</p>
+        <p>Note : {com.co_note}/5</p>
+    {/each}
 
     <form on:submit|preventDefault={validationAvis}>
         <h4>Donnez nous votre avis !</h4>
