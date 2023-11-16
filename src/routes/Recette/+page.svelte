@@ -103,7 +103,6 @@
 </script>
 
 <body>
-    <button on:click={() => window.location.href = "http://localhost:5173/"}>Retour à l'accueil</button>
     <h2>{titreRecette}</h2>
     <img src={imageRecette} width="400" height="300" alt="Non trouvé" />
 
