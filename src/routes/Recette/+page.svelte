@@ -7,7 +7,6 @@
     let notice = "";
 
     let idMeal = 0;
-    let idUser = 0;
 
     let preparation: string[] = [];
     let miseEnFormeNotice: string[] = [];
@@ -63,22 +62,10 @@
         }
     });
 
-    async function recupIdUser($nomUser: string) {
-        const { data, error } = await supabase
-            .from("User")
-            .select("id")
-            .like("Login", $nomUser);
-
-        if (data && data.length > 0) {
-            idUser = Number(data[0].id);
-        }
-    }
-
     async function validationAvis() {
-        await recupIdUser(retourUtilisateur.name);
         const { data, error } = await supabase.from("Commentaire").insert([
             {
-                co_user: idUser,
+                co_user: retourUtilisateur.name,
                 co_commentaire: retourUtilisateur.comment,
                 co_note: retourUtilisateur.rating,
                 co_recette: idMeal,
